@@ -1,0 +1,35 @@
+{
+	"name": "pokemon-unfuse",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/kit": "^1.15.0",
+		"@svelteuidev/composables": "^0.10.0",
+		"@types/node": "^18.15.11",
+		"autoprefixer": "^10.4.14",
+		"daisyui": "^2.51.5",
+		"postcss": "^8.4.21",
+		"svelte": "^3.58.0",
+		"svelte-check": "^3.1.4",
+		"svelte-legos": "^0.1.5",
+		"tailwind-scrollbar": "^3.0.0",
+		"tailwindcss": "^3.3.1",
+		"ts-node": "^10.9.1",
+		"tslib": "^2.5.0",
+		"typescript": "^5.0.3",
+		"vite": "^4.2.1",
+		"zod": "^3.21.4"
+	},
+	"type": "module",
+	"dependencies": {
+		"@sveltejs/adapter-vercel": "^2.4.1"
+	}
+}
