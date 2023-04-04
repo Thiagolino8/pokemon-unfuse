@@ -13,14 +13,14 @@
 				savedPokemons[pokemon.name] = pokemon
 				selectedId = pokemon.id
 			})
-	}
+	} else selectedId = 0
 </script>
 
 <img
 		width="80"
 		height="80"
-    class:invisible={!selected}
+    class:invisible={!selectedId}
 		class="mx-auto"
-		src={selectedId ? `https://images.alexonsager.net/pokemon/${selectedId}.png` : undefined}
+		src={selectedId ? `https://images.alexonsager.net/pokemon/${selectedId}.png` : null}
 		alt={selected?.name}
 	/>
