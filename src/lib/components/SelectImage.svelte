@@ -14,14 +14,13 @@
 				selectedId = pokemon.id
 			})
 	}
-	$:console.log(selected)
 </script>
 
 <img
 		width="80"
 		height="80"
-    class:invisible={!selectedId}
+    class:invisible={!selected}
 		class="mx-auto"
-		src={selectedId ? `https://images.alexonsager.net/pokemon/${selectedId}.png` : null}
+		src={selectedId ? `https://images.alexonsager.net/pokemon/${selectedId}.png` : undefined}
 		alt={selected?.name}
 	/>

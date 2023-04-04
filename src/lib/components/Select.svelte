@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { clickoutside } from '@svelteuidev/composables'
 	import { slide } from 'svelte/transition'
+	import type { PokemonItem, PokemonList } from '../types'
 	import SelectImage from './SelectImage.svelte'
 
-	interface Item {
-		name: string
-		url: string
-	}
-
-	export let selected: Item | undefined = undefined
-	export let items: Item[]
+	export let selected: PokemonItem | undefined = undefined
+	export let pokemonPromisses: Promise<PokemonList>
 	export let title: string
-	export let exclude: Item | Item[] | undefined = undefined
+	export let exclude: PokemonItem | undefined = undefined
+
+	let pokemons: Awaited<typeof pokemonPromisses>['results'] = []
+
+	$: pokemonPromisses.then((items) => {
+		pokemons = items.results
+	})
 
 	let isOpen = false
 	let filter = ''
@@ -24,15 +26,21 @@
 		isOpen = !isOpen
 	}
 
-	$: filteredItems = items
-		.filter((item) => (exclude && exclude instanceof Array ? !exclude.includes(item) : item !== exclude))
+	$: filteredPokemons = pokemons
+		.filter((item) => item !== exclude)
 		.filter((item) => item.name.toLowerCase().includes(filter.toLowerCase()))
 </script>
 
 <div use:clickoutside={{ enabled: isOpen, callback: close }} class="dropdown dropdown-bottom w-60 text-center">
 	<SelectImage {selected} />
 	<label for="btn-{title}" class="label-text">{title}</label>
-	<button id="btn-{title}" on:click={toggle} class="btn btn-primary w-full">{selected?.name ?? 'Choose'}</button>
+	{#await pokemonPromisses}
+		<button disabled id="btn-{title}" class="btn btn-primary w-full">Loading Pokemons...</button>
+	{:then}
+		<button id="btn-{title}" on:click={toggle} class="btn btn-primary w-full">
+			{selected?.name ?? 'Choose'}
+		</button>
+	{/await}
 	{#if isOpen}
 		<div
 			transition:slide
@@ -41,7 +49,7 @@
 			<!-- svelte-ignore a11y-autofocus -->
 			<input class="input input-bordered input-primary" autofocus bind:value={filter} placeholder="Filter" />
 			<ul class="overflow-y-auto h-80 scrollbar-none">
-				{#each filteredItems as item}
+				{#each filteredPokemons as item}
 					<li class="flex w-full {item.url === selected?.url ? 'btn-primary' : ''}">
 						<button
 							class="capitalize"

@@ -3,7 +3,6 @@
 	import { invalidateAll } from '$app/navigation'
 	import Select from '$lib/components/Select.svelte'
 	import { GameState, gameState } from '$lib/store'
-	import { onMount } from 'svelte'
 	import EndGame from '../lib/components/EndGame.svelte'
 	import Pokeball from '../lib/components/Pokeball.svelte'
 	import type { PokemonItem } from '../lib/types'
@@ -57,17 +56,19 @@
 
 <div class="flex justify-around h-screen">
 	<div class="mt-10">
-		{#await data.streamed.pokemons}
-			<p>Loading...</p>
-		{:then pokemons}
-			<Select exclude={bodyPokemon} bind:selected={headPokemon} title="Head pokemon" items={pokemons.results} />
-		{/await}
+		<Select
+			exclude={bodyPokemon}
+			bind:selected={headPokemon}
+			title="Head pokemon"
+			pokemonPromisses={data.streamed.pokemons}
+		/>
 	</div>
-	<div class="grid grid-flow-row content-center gap-2">
+	<div class="grid grid-flow-row justify-items-center content-center gap-2">
 		<img height="240" width="240" src={data.fusedPokemon.image_url} alt={data.fusedPokemon.name} />
 		<button
+			type="button"
 			disabled={loading}
-			class="btn btn-info justify-start gap-2 inline-flex before:visible {showTip
+			class="btn btn-block btn-info justify-start gap-2 inline-flex before:visible {showTip
 				? 'tooltip tooltip-open tooltip-info'
 				: ''}"
 			data-tip={data.fusedPokemon.name}
@@ -89,9 +90,10 @@
 			Tip: See fused pokemon name
 		</button>
 		<button
+			type="button"
 			on:click={submit}
 			disabled={!(headPokemon && bodyPokemon) || loading}
-			class="btn justify-start gap-2 btn-success"
+			class="btn btn-block justify-start gap-2 btn-success"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -109,7 +111,11 @@
 			</svg>
 			Guess
 		</button>
-		<button on:click={reset} class="btn btn-error justify-start gap-2 {loading ? 'loading no-animation' : ''}">
+		<button
+			type="button"
+			on:click={reset}
+			class="btn btn-block btn-error justify-start gap-2 {loading ? 'loading no-animation' : ''}"
+		>
 			{#if !loading}
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -130,11 +136,12 @@
 		</button>
 	</div>
 	<div class="mt-10">
-		{#await data.streamed.pokemons}
-			<p>Loading...</p>
-		{:then pokemons}
-			<Select exclude={headPokemon} bind:selected={bodyPokemon} title="Body pokemon" items={pokemons.results} />
-		{/await}
+		<Select
+			exclude={headPokemon}
+			bind:selected={bodyPokemon}
+			title="Body pokemon"
+			pokemonPromisses={data.streamed.pokemons}
+		/>
 	</div>
 </div>
 

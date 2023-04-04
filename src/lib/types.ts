@@ -21,6 +21,8 @@ export const pokemonListSchema = z.object({
     ),
   })
 
+export type PokemonList = z.infer<typeof pokemonListSchema>
+
 export type PokemonItem = z.infer<typeof pokemonListSchema>['results'][number]
 
 export const pokemonSchema = z.object({
