@@ -3,6 +3,7 @@
 	import { invalidateAll } from '$app/navigation'
 	import Select from '$lib/components/Select.svelte'
 	import { GameState, gameState } from '$lib/store'
+	import { onMount } from 'svelte'
 	import EndGame from '../lib/components/EndGame.svelte'
 	import Pokeball from '../lib/components/Pokeball.svelte'
 	import type { PokemonItem } from '../lib/types'
@@ -39,7 +40,10 @@
 		}
 	}
 
-	$: if (browser && !firstRender && $gameState === GameState.playing) reset()
+	$: if (browser) {
+		if (firstRender) firstRender = false
+		else if ($gameState === GameState.playing) reset()
+	}
 </script>
 
 <svelte:head>
