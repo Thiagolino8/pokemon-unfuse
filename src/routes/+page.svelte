@@ -68,8 +68,8 @@
 		<button
 			type="button"
 			disabled={loading}
-			class="btn btn-block btn-info justify-start gap-2 inline-flex before:visible {showTip
-				? 'tooltip tooltip-open tooltip-info'
+			class="btn btn-block btn-info justify-start gap-2 inline-flex {showTip
+				? 'tooltip tooltip-open tooltip-info before:visible'
 				: ''}"
 			data-tip={data.fusedPokemon.name}
 			on:click={() => (showTip = true)}
