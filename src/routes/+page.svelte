@@ -13,6 +13,7 @@
 	let bodyPokemon: PokemonItem | undefined
 	let showTip = false
 	let loading = false
+	let firstRender = true
 
 	const reset = () => {
 		if (loading) return
@@ -38,7 +39,7 @@
 		}
 	}
 
-	$: if (browser && $gameState === GameState.playing) reset()
+	$: if (browser && !firstRender && $gameState === GameState.playing) reset()
 </script>
 
 <svelte:head>
