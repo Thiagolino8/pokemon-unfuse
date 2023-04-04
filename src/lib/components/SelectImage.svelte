@@ -7,10 +7,10 @@
 	let selectedId: number
 
 	$: if (selected) {
-		if (savedPokemons.has(selected.name)) selectedId = savedPokemons.get(selected.name)!.id
+		if (savedPokemons[selected.name]) selectedId = savedPokemons[selected.name].id
 		else
 			typesafeFetch(selected?.url, pokemonSchema, fetch).then((pokemon) => {
-				savedPokemons.set(pokemon.name, pokemon)
+				savedPokemons[pokemon.name] = pokemon
 				selectedId = pokemon.id
 			})
 	}

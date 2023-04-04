@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { browser } from '$app/environment'
 	import { invalidateAll } from '$app/navigation'
 	import Select from '$lib/components/Select.svelte'
-	import { savedPokemons } from '$lib/store'
-	import LoadingSpiner from '../lib/components/LoadingSpiner.svelte'
+	import { GameState, gameState } from '$lib/store'
+	import EndGame from '../lib/components/EndGame.svelte'
+	import Pokeball from '../lib/components/Pokeball.svelte'
 	import type { PokemonItem } from '../lib/types'
 
 	export let data
@@ -23,14 +25,25 @@
 		})
 	}
 
-	$: data.streamed.headPokemon.then((pokemon) => {
-		if (!savedPokemons.has(pokemon.name)) savedPokemons.set(pokemon.name, pokemon)
-	})
+	const submit = () => {
+		if (bodyPokemon && headPokemon) {
+			if (
+				bodyPokemon.name.toLocaleLowerCase() === data.fusedPokemon.fused.body.toLocaleLowerCase() &&
+				headPokemon.name.toLocaleLowerCase() === data.fusedPokemon.fused.head.toLocaleLowerCase()
+			) {
+				$gameState = GameState.won
+			} else {
+				$gameState = GameState.lost
+			}
+		}
+	}
 
-	$: data.streamed.bodyPokemon.then((pokemon) => {
-		if (!savedPokemons.has(pokemon.name)) savedPokemons.set(pokemon.name, pokemon)
-	})
+	$: if (browser && $gameState === GameState.playing) reset()
 </script>
+
+<h1 class="text-5xl font-mono font-bold flex justify-center p-4">
+	<span class="text-red-600">Pokemon</span><Pokeball /><span class="text-white">Unfuse</span>
+</h1>
 
 <div class="flex justify-around h-screen">
 	<div class="mt-10">
@@ -44,7 +57,9 @@
 		<img src={data.fusedPokemon.image_url} alt={data.fusedPokemon.name} />
 		<button
 			disabled={loading}
-			class="btn btn-info gap-2 inline-flex {showTip ? 'tooltip tooltip-open tooltip-info' : ''}"
+			class="btn btn-info justify-start gap-2 inline-flex before:visible {showTip
+				? 'tooltip tooltip-open tooltip-info'
+				: ''}"
 			data-tip={data.fusedPokemon.name}
 			on:click={() => (showTip = true)}
 		>
@@ -63,8 +78,44 @@
 			</svg>
 			Tip: See fused pokemon name
 		</button>
-		<button disabled={loading} class="btn btn-success"> Guess </button>
-		<button on:click={reset} class="btn btn-error {loading ? 'loading no-animation' : ''}">
+		<button
+			on:click={submit}
+			disabled={!(headPokemon && bodyPokemon) || loading}
+			class="btn justify-start gap-2 btn-success"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="w-6 h-6"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+				/>
+			</svg>
+			Guess
+		</button>
+		<button on:click={reset} class="btn btn-error justify-start gap-2 {loading ? 'loading no-animation' : ''}">
+			{#if !loading}
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="w-6 h-6"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+					/>
+				</svg>
+			{/if}
 			{loading ? 'Loading' : 'Try another'}
 		</button>
 	</div>
@@ -76,3 +127,15 @@
 		{/await}
 	</div>
 </div>
+
+<EndGame />
+
+<style>
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
+
+	:global(img) {
+		image-rendering: pixelated;
+	}
+</style>

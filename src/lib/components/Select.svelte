@@ -40,7 +40,8 @@
 			transition:slide
 			class="absolute w-full grid grid-flow-row menu p-2 shadow bg-slate-900 text-slate-100 rounded-box gap-2"
 		>
-			<input class="input input-bordered input-primary" bind:value={filter} placeholder="Filter" />
+			<!-- svelte-ignore a11y-autofocus -->
+			<input class="input input-bordered input-primary" autofocus bind:value={filter} placeholder="Filter" />
 			<ul class="overflow-y-auto h-80 scrollbar-none">
 				{#each filteredItems as item}
 					<li class="flex w-full {item.url === selected?.url ? 'btn-primary' : ''}">
