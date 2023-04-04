@@ -10,7 +10,7 @@
 
 	export let selected: Item | undefined = undefined
 	export let items: Item[]
-	export let title: string | undefined = undefined
+	export let title: string
 	export let exclude: Item | Item[] | undefined = undefined
 
 	let isOpen = false
@@ -31,10 +31,8 @@
 
 <div use:clickoutside={{ enabled: isOpen, callback: close }} class="dropdown dropdown-bottom w-60 text-center">
 	<SelectImage {selected} />
-	{#if title}
-		<label for="btn" class="label-text">{title}</label>
-	{/if}
-	<button id="btn" on:click={toggle} class="btn btn-primary w-full">{selected?.name ?? 'Choose'}</button>
+	<label for="btn-{title}" class="label-text">{title}</label>
+	<button id="btn-{title}" on:click={toggle} class="btn btn-primary w-full">{selected?.name ?? 'Choose'}</button>
 	{#if isOpen}
 		<div
 			transition:slide
