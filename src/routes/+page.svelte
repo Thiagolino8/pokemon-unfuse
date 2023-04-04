@@ -64,7 +64,7 @@
 		{/await}
 	</div>
 	<div class="grid grid-flow-row content-center gap-2">
-		<img src={data.fusedPokemon.image_url} alt={data.fusedPokemon.name} />
+		<img height="240" width="240" src={data.fusedPokemon.image_url} alt={data.fusedPokemon.name} />
 		<button
 			disabled={loading}
 			class="btn btn-info justify-start gap-2 inline-flex before:visible {showTip
