@@ -41,6 +41,11 @@
 	$: if (browser && $gameState === GameState.playing) reset()
 </script>
 
+<svelte:head>
+	<title>Pokemon Unfuse</title>
+	<meta name="description" content="Unfuse pokemon game" />
+</svelte:head>
+
 <h1 class="text-5xl font-mono font-bold flex justify-center p-4">
 	<span class="text-red-600">Pokemon</span><Pokeball /><span class="text-white">Unfuse</span>
 </h1>
