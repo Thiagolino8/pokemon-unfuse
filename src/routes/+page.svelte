@@ -50,12 +50,12 @@
 	<meta name="description" content="Unfuse pokemon game" />
 </svelte:head>
 
-<h1 class="text-5xl font-mono font-bold flex justify-center p-4">
+<h1 class="text-4xl sm:text-5xl font-mono font-bold grid grid-flow-col place-content-center items-center p-4">
 	<span class="text-red-600">Pokemon</span><Pokeball /><span class="text-white">Unfuse</span>
 </h1>
 
-<div class="flex justify-around h-screen">
-	<div class="mt-10">
+<div class="grid grid-areas-portrait-layout sm:grid-areas-landscape-layout justify-items-center w-full p-4 gap-8">
+	<div class="grid-in-head">
 		<Select
 			exclude={bodyPokemon}
 			bind:selected={headPokemon}
@@ -63,8 +63,14 @@
 			pokemonPromisses={data.streamed.pokemons}
 		/>
 	</div>
-	<div class="grid grid-flow-row justify-items-center content-center gap-2">
-		<img height="240" width="240" src={data.fusedPokemon.image_url} alt={data.fusedPokemon.name} />
+	<img
+		class="grid-in-fused grid grid-flow-row place-content-center"
+		height="240"
+		width="240"
+		src={data.fusedPokemon.image_url}
+		alt={data.fusedPokemon.name}
+	/>
+	<div class="grid-in-guess grid grid-flow-row gap-2 place-content-center">
 		<button
 			type="button"
 			disabled={loading}
@@ -135,7 +141,7 @@
 			{loading ? 'Loading' : 'Try another'}
 		</button>
 	</div>
-	<div class="mt-10">
+	<div class="grid-in-body">
 		<Select
 			exclude={headPokemon}
 			bind:selected={bodyPokemon}

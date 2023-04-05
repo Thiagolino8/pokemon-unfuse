@@ -10,6 +10,9 @@
 	export let exclude: PokemonItem | undefined = undefined
 
 	let pokemons: Awaited<typeof pokemonPromisses>['results'] = []
+	let dropdown: HTMLDivElement
+	let innerHeight: number
+	let scrollY: number
 
 	$: pokemonPromisses.then((items) => {
 		pokemons = items.results
@@ -26,13 +29,21 @@
 		isOpen = !isOpen
 	}
 
+	$: dropdownBottom = scrollY || true ? innerHeight - dropdown?.getBoundingClientRect().bottom > 320 : true
+
 	$: filteredPokemons = pokemons
 		.filter((item) => item !== exclude)
 		.filter((item) => item.name.toLowerCase().includes(filter.toLowerCase()))
 </script>
 
-<div use:clickoutside={{ enabled: isOpen, callback: close }} class="dropdown dropdown-bottom w-60 text-center">
-	<SelectImage {selected} />
+<svelte:window bind:innerHeight bind:scrollY />
+
+<SelectImage {selected} />
+<div
+	bind:this={dropdown}
+	use:clickoutside={{ enabled: isOpen, callback: close }}
+	class="dropdown {dropdownBottom ? 'dropdown-bottom' : 'dropdown-top'} w-60 text-center"
+>
 	<label for="btn-{title}" class="label-text">{title}</label>
 	{#await pokemonPromisses}
 		<button disabled id="btn-{title}" class="btn btn-primary w-full">Loading Pokemons...</button>
@@ -44,7 +55,7 @@
 	{#if isOpen}
 		<div
 			transition:slide
-			class="absolute w-full grid grid-flow-row menu p-2 shadow bg-slate-900 text-slate-100 rounded-box gap-2"
+			class="absolute dropdown-content z-10 w-full grid grid-flow-row menu p-2 shadow bg-slate-900 text-slate-100 rounded-box gap-2"
 		>
 			<!-- svelte-ignore a11y-autofocus -->
 			<input class="input input-bordered input-primary" autofocus bind:value={filter} placeholder="Filter" />

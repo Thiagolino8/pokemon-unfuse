@@ -11,6 +11,7 @@
 	},
 	"devDependencies": {
 		"@poppanator/sveltekit-svg": "^3.0.0",
+		"@savvywombat/tailwindcss-grid-areas": "^3.0.1",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.15.0",
 		"@svelteuidev/composables": "^0.10.0",
