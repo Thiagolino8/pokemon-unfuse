@@ -5,7 +5,7 @@ import scrollbar from 'tailwind-scrollbar'
 import gridAreas from '@savvywombat/tailwindcss-grid-areas'
 
 export default {
-	content: ['./src/**/*.html', './src/**/*.svelte'],
+	content: ['./src/**/*.svg', './src/**/*.svelte'],
 	theme: {
 		extend: {
 			gridTemplateAreas: {

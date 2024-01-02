@@ -1,12 +1,12 @@
 <script lang="ts">
-	import '../app.css'
 	import { invalidateAll } from '$app/navigation'
 	import Select from '$lib/components/Select.svelte'
 	import { GameState, game } from '$lib/store.svelte'
-	import EndGame from '../lib/components/EndGame.svelte'
-	import Pokeball from '../lib/components/Pokeball.svelte'
-	import type { PokemonItem } from '../lib/types'
 	import { untrack } from 'svelte'
+	import '../app.css'
+	import pokeball from '../lib/pokeball.svg?raw'
+	import EndGame from '../lib/components/EndGame.svelte'
+	import type { PokemonItem } from '../lib/types'
 
 	let { data } = $props()
 
@@ -53,7 +53,7 @@
 
 <h1 class="text-4xl sm:text-5xl font-mono font-bold grid grid-flow-col place-content-center items-center p-4">
 	<span class="text-red-600">Pokemon</span>
-	<Pokeball />
+	{@html pokeball}
 	<span class="text-white">Unfuse</span>
 </h1>
 
