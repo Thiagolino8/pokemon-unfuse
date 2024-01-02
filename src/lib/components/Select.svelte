@@ -12,9 +12,6 @@
 	}>()
 
 	let pokemons = $state<Awaited<typeof pokemonPromises>['results']>([])
-	let dropdown = $state<HTMLDivElement>()
-	let innerHeight = $state<number>(0)
-	let scrollY = $state<number>()
 
 	$effect(() => {
 		pokemonPromises.then((items) => {
@@ -33,10 +30,6 @@
 		isOpen = !isOpen
 	}
 
-	const dropdownBottom = $derived(
-		scrollY || true ? innerHeight - (dropdown?.getBoundingClientRect().bottom ?? 0) > 320 : true
-	)
-
 	const filteredPokemons = $derived(
 		pokemons.filter((item) => item !== exclude).filter((item) => item.name.toLowerCase().includes(filter.toLowerCase()))
 	)
@@ -46,13 +39,10 @@
 	}
 </script>
 
-<svelte:window bind:innerHeight bind:scrollY />
-
 <SelectImage {selected} />
 <div
-	bind:this={dropdown}
 	use:clickoutside={{ enabled: isOpen, callback: close }}
-	class="dropdown {dropdownBottom ? 'dropdown-bottom' : 'dropdown-top'} w-60 text-center"
+	class="dropdown md:dropdown-bottom dropdown-top text-center"
 >
 	<label for="btn-{title}" class="label-text">{title}</label>
 	{#await pokemonPromises}
@@ -65,9 +55,9 @@
 	{#if isOpen}
 		<div
 			transition:slide
-			class="absolute dropdown-content z-10 w-full grid grid-flow-row menu p-2 shadow bg-slate-900 text-slate-100 rounded-box gap-2"
+			class="absolute dropdown-content z-10 w-auto grid menu p-2 shadow bg-slate-900 text-slate-100 rounded-box gap-2"
 		>
-			<input class="input input-bordered input-primary" use:autofocus bind:value={filter} placeholder="Filter" />
+			<input class="input input-bordered input-primary w-auto" use:autofocus bind:value={filter} placeholder="Filter" />
 			<ul class="overflow-y-auto h-80 scrollbar-none">
 				{#each filteredPokemons as item}
 					<li class="flex w-full {item.url === selected?.url ? 'btn-primary' : ''}">
