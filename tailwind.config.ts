@@ -1,6 +1,6 @@
 import { Config } from 'tailwindcss'
 import daisyui from 'daisyui'
-import themes from 'daisyui/src/colors/themes'
+import themes from 'daisyui/src/theming/themes'
 import scrollbar from 'tailwind-scrollbar'
 import gridAreas from '@savvywombat/tailwindcss-grid-areas'
 
@@ -18,7 +18,7 @@ export default {
 		themes: [
 			{
 				default: {
-					...themes['[data-theme=autumn]'],
+					...themes['autumn'],
 					'base-100': '#1e293b',
 				},
 			},

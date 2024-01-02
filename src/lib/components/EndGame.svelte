@@ -1,19 +1,20 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition'
-	import { gameState, GameState } from '../store'
+	import { game, GameState } from '../store.svelte'
 
 	const endGameMessages = {
-		[GameState.won]: 'You won!',
-		[GameState.lost]: 'You lost!',
+		[GameState.won]: 'You win!',
+		[GameState.lost]: 'You lose!',
+	}
+
+	const show = (dialog: HTMLDialogElement) => {
+		dialog.showModal()
 	}
 </script>
 
-{#if $gameState !== GameState.playing}
-	<div
-		transition:fade
-		class="h-screen w-screen bg-black/70 z-10 top-0 left-0 fixed grid gap-4 justify-items-center place-content-center"
-	>
-		<h2 class="text-4xl font-bold">{endGameMessages[$gameState]}</h2>
-		<button on:click={() => ($gameState = GameState.playing)} class="btn btn-primary"> Play again </button>
-	</div>
+{#if game.state !== GameState.playing}
+	<dialog use:show transition:fade class="grid [&::backdrop]:bg-black/70 overflow-hidden bg-transparent gap-4 place-content-center">
+		<h2 class="text-4xl text-white font-bold">{endGameMessages[game.state]}</h2>
+		<button on:click={() => (game.state = GameState.playing)} class="btn btn-primary">Play again</button>
+	</dialog>
 {/if}

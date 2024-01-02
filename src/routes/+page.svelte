@@ -1,18 +1,19 @@
 <script lang="ts">
-	import { browser } from '$app/environment'
+	import '../app.css'
 	import { invalidateAll } from '$app/navigation'
 	import Select from '$lib/components/Select.svelte'
-	import { GameState, gameState } from '$lib/store'
+	import { GameState, game } from '$lib/store.svelte'
 	import EndGame from '../lib/components/EndGame.svelte'
 	import Pokeball from '../lib/components/Pokeball.svelte'
 	import type { PokemonItem } from '../lib/types'
+	import { untrack } from 'svelte'
 
-	export let data
+	let { data } = $props()
 
-	let headPokemon: PokemonItem | undefined
-	let bodyPokemon: PokemonItem | undefined
-	let showTip = false
-	let loading = false
+	let headPokemon = $state<PokemonItem>()
+	let bodyPokemon = $state<PokemonItem>()
+	let showTip = $state(false)
+	let loading = $state(false)
 	let firstRender = true
 
 	const reset = () => {
@@ -27,22 +28,22 @@
 	}
 
 	const submit = () => {
-		if (bodyPokemon && headPokemon) {
-			if (
-				bodyPokemon.name.toLocaleLowerCase() === data.fusedPokemon.fused.body.toLocaleLowerCase() &&
-				headPokemon.name.toLocaleLowerCase() === data.fusedPokemon.fused.head.toLocaleLowerCase()
-			) {
-				$gameState = GameState.won
-			} else {
-				$gameState = GameState.lost
-			}
+		if (!bodyPokemon || !headPokemon) return
+		if (
+			bodyPokemon.name.toLocaleLowerCase() === data.fusedPokemon.fused.body.toLocaleLowerCase() &&
+			headPokemon.name.toLocaleLowerCase() === data.fusedPokemon.fused.head.toLocaleLowerCase()
+		) {
+			game.state = GameState.won
+		} else {
+			game.state = GameState.lost
 		}
 	}
 
-	$: if (browser) {
+	$effect(() => {
+		game.state
 		if (firstRender) firstRender = false
-		else if ($gameState === GameState.playing) reset()
-	}
+		else if (game.state === GameState.playing) untrack(reset)
+	})
 </script>
 
 <svelte:head>
@@ -51,7 +52,9 @@
 </svelte:head>
 
 <h1 class="text-4xl sm:text-5xl font-mono font-bold grid grid-flow-col place-content-center items-center p-4">
-	<span class="text-red-600">Pokemon</span><Pokeball /><span class="text-white">Unfuse</span>
+	<span class="text-red-600">Pokemon</span>
+	<Pokeball />
+	<span class="text-white">Unfuse</span>
 </h1>
 
 <div class="grid grid-areas-portrait-layout sm:grid-areas-landscape-layout justify-items-center w-full p-4 gap-8">
@@ -60,7 +63,7 @@
 			exclude={bodyPokemon}
 			bind:selected={headPokemon}
 			title="Head pokemon"
-			pokemonPromisses={data.streamed.pokemons}
+			pokemonPromises={data.streamed.pokemons}
 		/>
 	</div>
 	<img
@@ -117,11 +120,7 @@
 			</svg>
 			Guess
 		</button>
-		<button
-			type="button"
-			on:click={reset}
-			class="btn btn-block btn-error justify-start gap-2 {loading ? 'loading no-animation' : ''}"
-		>
+		<button type="button" on:click={reset} class="btn btn-block btn-error justify-start gap-2">
 			{#if !loading}
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -137,6 +136,8 @@
 						d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
 					/>
 				</svg>
+			{:else}
+				<span class="loading no-animation" />
 			{/if}
 			{loading ? 'Loading' : 'Try another'}
 		</button>
@@ -146,19 +147,9 @@
 			exclude={headPokemon}
 			bind:selected={bodyPokemon}
 			title="Body pokemon"
-			pokemonPromisses={data.streamed.pokemons}
+			pokemonPromises={data.streamed.pokemons}
 		/>
 	</div>
 </div>
 
 <EndGame />
-
-<style>
-	@tailwind base;
-	@tailwind components;
-	@tailwind utilities;
-
-	:global(img) {
-		image-rendering: pixelated;
-	}
-</style>

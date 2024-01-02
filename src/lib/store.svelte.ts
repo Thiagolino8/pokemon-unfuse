@@ -1,7 +1,6 @@
 import type { Pokemon } from '$lib/types'
-import { writable } from 'svelte/store'
 
-export enum GameState {
+export const enum GameState {
 	playing = 'playing',
 	lost = 'lost',
 	won = 'won',
@@ -9,4 +8,4 @@ export enum GameState {
 
 export const savedPokemons: Record<string, Pokemon> = {}
 
-export const gameState = writable<GameState>(GameState.playing)
+export const game = $state({ state: GameState.playing })
