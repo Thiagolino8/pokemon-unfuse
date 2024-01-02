@@ -83,7 +83,7 @@
 					? 'tooltip tooltip-open tooltip-info before:visible'
 					: ''}"
 				data-tip={data.fusedPokemon.name}
-				on:click={() => (showTip = true)}
+				onclick={() => (showTip = true)}
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +102,7 @@
 			</button>
 			<button
 				type="button"
-				on:click={submit}
+				onclick={submit}
 				disabled={!(headPokemon && bodyPokemon) || loading}
 				class="btn btn-block justify-start gap-2 btn-success"
 			>
@@ -122,7 +122,7 @@
 				</svg>
 				Guess
 			</button>
-			<button type="button" on:click={reset} class="btn btn-block btn-error justify-start gap-2">
+			<button type="button" onclick={reset} class="btn btn-block btn-error justify-start gap-2">
 				{#if !loading}
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
