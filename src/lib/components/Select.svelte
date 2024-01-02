@@ -48,7 +48,7 @@
 	{#await pokemonPromises}
 		<button disabled id="btn-{title}" class="btn btn-primary w-full">Loading Pokemons...</button>
 	{:then}
-		<button id="btn-{title}" on:click={toggle} class="btn btn-primary w-full">
+		<button id="btn-{title}" onclick={toggle} class="btn btn-primary w-full">
 			{selected?.name ?? 'Choose'}
 		</button>
 	{/await}
@@ -63,7 +63,7 @@
 					<li class="flex w-full {item.url === selected?.url ? 'btn-primary' : ''}">
 						<button
 							class="capitalize"
-							on:click={() => {
+							onclick={() => {
 								selected = item
 								close()
 							}}
