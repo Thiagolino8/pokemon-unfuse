@@ -3,19 +3,16 @@
 	import Footer from '$lib/components/Footer.svelte'
 	import Select from '$lib/components/Select.svelte'
 	import { GameState, game } from '$lib/store.svelte'
-	import { untrack } from 'svelte'
 	import '../app.css'
-	import EndGame from '../lib/components/EndGame.svelte'
-	import pokeball from '../lib/pokeball.svg?raw'
-	import type { PokemonItem } from '../lib/types'
+	import EndGame from '$lib/components/EndGame.svelte'
+	import pokeball from '$lib/pokeball.svg?raw'
 
 	let { data } = $props()
 
-	let headPokemon = $state<PokemonItem>()
-	let bodyPokemon = $state<PokemonItem>()
+	let headPokemon = $state<(typeof data)['pokemons'][number]>()
+	let bodyPokemon = $state<(typeof data)['pokemons'][number]>()
 	let showTip = $state(false)
 	let loading = $state(false)
-	let firstRender = true
 
 	const reset = () => {
 		if (loading) return
@@ -30,21 +27,10 @@
 
 	const submit = () => {
 		if (!bodyPokemon || !headPokemon) return
-		if (
-			bodyPokemon.name.toLocaleLowerCase() === data.fusedPokemon.fused.body.toLocaleLowerCase() &&
-			headPokemon.name.toLocaleLowerCase() === data.fusedPokemon.fused.head.toLocaleLowerCase()
-		) {
-			game.state = GameState.won
-		} else {
-			game.state = GameState.lost
-		}
+		if (bodyPokemon.id === data.fusedPokemon.ids[1] && headPokemon.id === data.fusedPokemon.ids[0])
+			return (game.state = GameState.won)
+		game.state = GameState.lost
 	}
-
-	$effect(() => {
-		game.state
-		if (firstRender) firstRender = false
-		else if (game.state === GameState.playing) untrack(reset)
-	})
 </script>
 
 <svelte:head>
@@ -59,23 +45,20 @@
 		<span class="text-white">Unfuse</span>
 	</h1>
 
-	<div class="grid grid-areas-portrait-layout sm:grid-areas-landscape-layout justify-items-center w-full p-4 gap-8">
-		<div class="grid-in-head">
-			<Select
-				exclude={bodyPokemon}
-				bind:selected={headPokemon}
-				title="Head pokemon"
-				pokemonPromises={data.streamed.pokemons}
-			/>
+	<div
+		class="grid [grid-teplate-areas:'fused'_'head'_'body'_'guess'] sm:[grid-template-areas:'head_fused_body'_'head_guess_body'] justify-items-center w-full p-4 gap-8"
+	>
+		<div class="[grid-area:head]">
+			<Select exclude={bodyPokemon} bind:selected={headPokemon} title="Head pokemon" pokemons={data.pokemons} />
 		</div>
 		<img
-			class="grid-in-fused grid grid-flow-row place-content-center"
+			class="[grid-area:fused] grid grid-flow-row place-content-center"
 			height="240"
 			width="240"
-			src={data.fusedPokemon.image_url}
+			src={data.fusedPokemon.url}
 			alt={data.fusedPokemon.name}
 		/>
-		<div class="grid-in-guess grid grid-flow-row gap-2 place-content-center">
+		<div class="[grid-area:guess] grid grid-flow-row gap-2 place-content-center">
 			<button
 				type="button"
 				disabled={loading}
@@ -139,18 +122,13 @@
 						/>
 					</svg>
 				{:else}
-					<span class="loading no-animation" />
+					<span class="loading no-animation"></span>
 				{/if}
 				{loading ? 'Loading' : 'Try another'}
 			</button>
 		</div>
-		<div class="grid-in-body">
-			<Select
-				exclude={headPokemon}
-				bind:selected={bodyPokemon}
-				title="Body pokemon"
-				pokemonPromises={data.streamed.pokemons}
-			/>
+		<div class="[grid-area:body]">
+			<Select exclude={headPokemon} bind:selected={bodyPokemon} title="Body pokemon" pokemons={data.pokemons} />
 		</div>
 	</div>
 </main>

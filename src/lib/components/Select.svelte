@@ -1,78 +1,84 @@
 <script lang="ts">
-	import { clickoutside } from '@svelteuidev/composables'
-	import { slide } from 'svelte/transition'
-	import type { PokemonItem, PokemonList } from '../types'
+	import type Pokemons from '$lib/pokemons.json'
+	import { tick } from 'svelte'
 	import SelectImage from './SelectImage.svelte'
+	import { on } from 'svelte/events'
 
-	let { selected, pokemonPromises, title, exclude } = $props<{
-		selected?: PokemonItem
-		pokemonPromises: Promise<PokemonList>
+	let {
+		selected = $bindable(),
+		pokemons,
+		title,
+		exclude,
+	}: {
+		selected?: (typeof Pokemons)[number]
+		pokemons: typeof Pokemons
 		title: string
-		exclude?: PokemonItem
-	}>()
+		exclude?: (typeof Pokemons)[number]
+	} = $props()
 
-	let pokemons = $state<Awaited<typeof pokemonPromises>['results']>([])
-
-	$effect(() => {
-		pokemonPromises.then((items) => {
-			pokemons = items.results
-		})
-	})
-
-	let isOpen = $state(false)
+	let modal: HTMLDialogElement
+	let input: HTMLInputElement
 	let filter = $state('')
 
-	const close = () => {
-		isOpen = false
-	}
-
-	const toggle = () => {
-		isOpen = !isOpen
-	}
-
 	const filteredPokemons = $derived(
-		pokemons.filter((item) => item !== exclude).filter((item) => item.name.toLowerCase().includes(filter.toLowerCase()))
+		pokemons
+			.filter((item) => item.id !== exclude?.id)
+			.filter((item) => item.name.toLowerCase().includes(filter.toLowerCase()))
 	)
 
-	const autofocus = (node: HTMLInputElement) => {
-		node.focus()
+	const clickoutside = (node: HTMLDialogElement) => {
+		$effect(() => {
+			const observer = new MutationObserver((mutationList) => {
+				mutationList.forEach((mutation) => {
+					if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
+						setTimeout(() => input.focus(), 0)
+					}
+				})
+			})
+			observer.observe(node, {
+				attributes: true,
+				attributeFilter: ['open'],
+			})
+			const unsubClick = on(node, 'click', (event) => {
+				if (event.target === node) {
+					modal.close()
+				}
+			})
+			const unsubClose = on(node, 'close', () => {
+				input.value = ''
+				filter = ''
+			})
+			return () => {
+				unsubClick()
+				unsubClose()
+				observer.disconnect()
+			}
+		})
 	}
 </script>
 
 <SelectImage {selected} />
-<div
-	use:clickoutside={{ enabled: isOpen, callback: close }}
-	class="dropdown md:dropdown-bottom dropdown-top text-center"
->
-	<label for="btn-{title}" class="label-text">{title}</label>
-	{#await pokemonPromises}
-		<button disabled id="btn-{title}" class="btn btn-primary w-full">Loading Pokemons...</button>
-	{:then}
-		<button id="btn-{title}" onclick={toggle} class="btn btn-primary w-full">
-			{selected?.name ?? 'Choose'}
-		</button>
-	{/await}
-	{#if isOpen}
-		<div
-			transition:slide
-			class="absolute dropdown-content z-10 w-auto grid menu p-2 shadow bg-slate-900 text-slate-100 rounded-box gap-2"
-		>
-			<input class="input input-bordered input-primary w-auto" use:autofocus bind:value={filter} placeholder="Filter" />
-			<ul class="overflow-y-auto h-80 scrollbar-none">
-				{#each filteredPokemons as item}
-					<li class="flex w-full {item.url === selected?.url ? 'btn-primary' : ''}">
-						<button
-							class="capitalize"
-							onclick={() => {
-								selected = item
-								close()
-							}}
-						>
-							{item.name}
-						</button>
-					</li>
-				{/each}
-			</ul>
-		</div>
-	{/if}
-</div>
+<label for="btn-{title}" class="floating-label">{title}</label>
+<button id="btn-{title}" onclick={() => modal.showModal()} class="btn btn-primary w-full">
+	{selected?.name ?? 'Choose'}
+</button>
+<dialog bind:this={modal} use:clickoutside class="modal absolute">
+	<div class="modal-box menu grid scrollbar-none bg-slate-900 rounded-box gap-2 p-2">
+		<input class="input w-auto" bind:this={input} bind:value={filter} placeholder="Filter" />
+		<ul class="overflow-y-auto h-80 scrollbar-none">
+			{#each filteredPokemons as item}
+				<li class="flex w-full text-slate-100 {item.id === selected?.id ? 'btn-primary' : ''}">
+					<button
+						class="capitalize"
+						onclick={() => {
+							selected = item
+							modal.close()
+						}}
+					>
+						{item.name}
+					</button>
+				</li>
+			{/each}
+		</ul>
+	</div>
+</dialog>

@@ -1,11 +1,17 @@
-	@tailwind base;
-	@tailwind components;
-	@tailwind utilities;
+@import 'tailwindcss';
+@plugin "tailwind-scrollbar";
+@plugin "daisyui" {
+	themes: dark --default, autumn;
+}
 
-	img {
-		image-rendering: pixelated;
-	}
+img {
+	image-rendering: pixelated;
+}
 
-	body {
-		@apply h-dvh grid grid-rows-[1fr_auto]
-	}
+body {
+	@apply h-dvh grid grid-rows-[1fr_auto];
+}
+
+:root {
+	@apply scrollbar-none;
+}

@@ -1,15 +1,21 @@
-import { fusedPokemonSchema, pokemonListSchema } from '$lib/types'
-import { typesafeFetch } from '$lib/utils'
+import pokemons from '$lib/pokemons.json'
+import { genName } from '$lib/utils'
+import prefixes from '$lib/prefixes.json'
+import suffixes from '$lib/suffixes.json'
 
-export const load = async ({ fetch }) => {
-	const fusedPokemon = await typesafeFetch('https://keith.api.stdlib.com/pokefusion@0.2.0/', fusedPokemonSchema, fetch)
-
-	const pokemons = typesafeFetch('https://pokeapi.co/api/v2/pokemon?limit=151&offset=0', pokemonListSchema, fetch)
+export const load = async () => {
+	const [pokemon1, pokemon2] = [Math.floor(Math.random() * 151), Math.floor(Math.random() * 151)]
+	const fusedPokemon = {
+		ids: [pokemon1, pokemon2],
+		url: `https://images.alexonsager.net/pokemon/fused/${pokemon2}/${pokemon2}.${pokemon1}.png`,
+		name: genName(
+			prefixes[String(pokemon1) as keyof typeof prefixes],
+			suffixes[String(pokemon2) as keyof typeof suffixes]
+		),
+	}
 
 	return {
 		fusedPokemon,
-		streamed: {
-			pokemons,
-		},
+		pokemons,
 	}
 }
