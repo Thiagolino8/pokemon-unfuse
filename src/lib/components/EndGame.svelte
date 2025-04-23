@@ -7,6 +7,8 @@
 		[GameState.playing]: 'Playing...',
 	} as const
 
+	let { reset }: { reset: () => void } = $props()
+
 	let modal: HTMLDialogElement
 
 	$effect(() => {
@@ -22,6 +24,7 @@
 			onclick={() => {
 				game.state = GameState.playing
 				modal.close()
+				reset()
 			}}
 			class="btn btn-primary"
 		>

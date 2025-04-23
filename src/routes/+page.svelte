@@ -20,9 +20,7 @@
 		headPokemon = undefined
 		bodyPokemon = undefined
 		showTip = false
-		invalidateAll().then(() => {
-			loading = false
-		})
+		invalidateAll()
 	}
 
 	const submit = () => {
@@ -46,7 +44,7 @@
 	</h1>
 
 	<div
-		class="grid [grid-teplate-areas:'fused'_'head'_'body'_'guess'] sm:[grid-template-areas:'head_fused_body'_'head_guess_body'] justify-items-center w-full p-4 gap-8"
+		class="grid [grid-template-areas:'fused'_'head'_'body'_'guess'] sm:[grid-template-areas:'head_fused_body'_'head_guess_body'] justify-items-center w-full p-4 gap-8"
 	>
 		<div class="[grid-area:head]">
 			<Select exclude={bodyPokemon} bind:selected={headPokemon} title="Head pokemon" pokemons={data.pokemons} />
@@ -57,6 +55,9 @@
 			width="240"
 			src={data.fusedPokemon.url}
 			alt={data.fusedPokemon.name}
+			onload={() => {
+				loading = false
+			}}
 		/>
 		<div class="[grid-area:guess] grid grid-flow-row gap-2 place-content-center">
 			<button
@@ -133,5 +134,5 @@
 	</div>
 </main>
 
-<EndGame />
+<EndGame {reset} />
 <Footer />
