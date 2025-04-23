@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type Pokemons from '$lib/pokemons.json'
-	import { tick } from 'svelte'
 	import SelectImage from './SelectImage.svelte'
 	import { on } from 'svelte/events'
 
@@ -19,6 +18,7 @@
 	let modal: HTMLDialogElement
 	let input: HTMLInputElement
 	let filter = $state('')
+	let shouldFocus = false
 
 	const filteredPokemons = $derived(
 		pokemons
@@ -31,7 +31,7 @@
 			const observer = new MutationObserver((mutationList) => {
 				mutationList.forEach((mutation) => {
 					if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
-						setTimeout(() => input.focus(), 0)
+						shouldFocus = true
 					}
 				})
 			})
@@ -62,12 +62,22 @@
 <button id="btn-{title}" onclick={() => modal.showModal()} class="btn btn-primary w-full">
 	{selected?.name ?? 'Choose'}
 </button>
-<dialog bind:this={modal} use:clickoutside class="modal absolute">
-	<div class="modal-box menu grid scrollbar-none bg-slate-900 rounded-box gap-2 p-2">
-		<input class="input w-auto" bind:this={input} bind:value={filter} placeholder="Filter" />
+<dialog
+	ontransitionend={() => {
+		if (shouldFocus) {
+			shouldFocus = false
+			input.focus()
+		}
+	}}
+	bind:this={modal}
+	use:clickoutside
+	class="modal absolute"
+>
+	<div class="modal-box menu grid scrollbar-none rounded-box gap-2 p-2">
+		<input class="input w-auto font-extrabold" bind:this={input} bind:value={filter} placeholder="Filter" />
 		<ul class="overflow-y-auto h-80 scrollbar-none">
 			{#each filteredPokemons as item}
-				<li class="flex w-full text-slate-100 {item.id === selected?.id ? 'btn-primary' : ''}">
+				<li class="flex w-full font-bold {item.id === selected?.id ? 'btn-primary' : ''}">
 					<button
 						class="capitalize"
 						onclick={() => {

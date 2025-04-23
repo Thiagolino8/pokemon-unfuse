@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @plugin "tailwind-scrollbar";
 @plugin "daisyui" {
-	themes: dark --default, autumn;
+	themes: dark --default, dracula;
 }
 
 img {
